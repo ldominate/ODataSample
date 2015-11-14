@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+	<title>@ViewBag.Title</title>
+	<link href="~/Content/kendo/2014.1.318/kendo.common.min.css" rel="stylesheet" />
+	<link href="~/Content/kendo/2014.1.318/kendo.default.min.css" rel="stylesheet"/>
+
+    @Styles.Render("~/Content/css", "~/Content/kendoStyle")
+
+    @Scripts.Render("~/bundles/jquery", "~/bundles/modernizr", "~/Content/kendoScript")
+
+	<script src="~/Scripts/kendo/2014.1.318/kendo.web.min.js"></script>
+</head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<body>
+    <header>
+        <div class="content-wrapper">
+            <div class="float-left">
+                <p class="site-title">
+                    <a href="~/">ASP.NET Web API</a></p>
+            </div>
+            <div class="float-right">
+                <nav>
+                    <ul id="menu">
+                        <li>@Html.ActionLink("Домашняя страница", "Index", "Home", new { area = "" }, null)</li>
+						<li>@Html.ActionLink("Language", "Languages", "Home")</li>
+                        <li>@Html.ActionLink("API", "Index", "Help", new { area = "" }, null)</li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    @RenderBody()
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

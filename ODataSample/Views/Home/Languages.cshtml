@@ -1,0 +1,128 @@
+﻿@{
+    ViewBag.Title = "Languages";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="body">
+	<section class="featured">
+		<div class="content-wrapper">
+			<hgroup class="title">
+				<h1>Language</h1>
+			</hgroup>
+			<div id="Grid" style="height: 380px"></div>
+		</div>
+	</section>
+</div>
+
+@section scripts
+{
+<script>
+	$(document).ready(function () {
+		$("#Grid").kendoGrid({
+			columns: [
+                { field: "Alias", title: "Language Alias", width: "100px" },
+                { field: "TitleRu", title: "Title Ru", width: "150px" },
+                { field: "TitleEn", title: "Title En", width: "150px" },
+				{ field: "Description", title: "Description", width: "100px" },
+				{ field: "IsDeleted", title: "Is Deleted", width: "50px" },
+                { command: "edit", title: "Edit", width: "70px" },
+                { command: "destroy", title: "Delete", width: "70px" }
+			],
+			pageable: false,
+			scrollable: {
+				virtual: true
+			},
+			pageSize: 5,
+			sortable: true,
+			filterable: true,
+			editable: "popup",
+			toolbar: ["create"],
+			dataSource: {
+				serverPaging: true,
+				serverFiltering: true,
+				serverSorting: true,
+				pageSize: 5,
+				type: "odata",
+				schema: {
+					data: function (response) {
+						if (response.value !== undefined)
+							return response.value;
+						else {
+							delete response["odata.metadata"];
+							return response;
+						}
+					},
+					total: function (response) {
+						return response['odata.count'];
+					},
+					model: {
+						id: "Guid",
+						fields: {
+							Guid: { editable: false, type: "string" },
+							Alias: { type: "string", nullable: false, validation: { required: true }, editable: true },
+							TitleRu: { nullable: true, type: "string", editable: true },
+							TitleEn: { nullable: true, type: "string", editable: true },
+							Description: { nullable: true, type: "string", editable: true },
+							IsDeleted: { type: "boolean", validation: { required: false }, editable: true }
+						}
+					}
+				},
+				batch: false,
+				error: error,
+				transport: {
+					create: {
+						url: "/odata/Language",
+						contentType: "application/json",
+						type: "POST"
+					},
+					read: {
+						url: "/odata/Language",
+						dataType: "json",
+						contentType: "application/json"
+					},
+					update: {
+						url: function (record) {
+							return "/odata/Language" + "(guid'" + record.Guid + "')";
+						},
+						dataType: "json",
+						contentType: "application/json",
+						type: "PUT",
+						headers: { Prefer: "return-content" }
+					},
+					destroy: {
+						url: function (record) {
+							return "/odata/Language" + "(guid'" + record.Guid + "')";
+						},
+						contentType: "application/json",
+						type: "DELETE"
+					},
+					parametermap: function (data, operation) {
+						console.log(data);
+						if (operation === "read") {
+							var parammap = kendo.data.transports.odata.parametermap(data);
+							return parammap;
+						}
+						return json.stringify(data);
+					}
+				}
+			}
+		});
+
+
+	});
+
+	function error(e) {
+		if (e.errorThrown === "Bad Request") {
+			var response = JSON.parse(e.xhr.responseText);
+			console.log(response);
+			if (response['odata.error'] != undefined) {
+				alert(response['odata.error'].message.value);
+			}
+		}
+		else {
+			alert(e.status + ": " + e.errorThrown);
+		}
+	};
+
+	</script>
+}
